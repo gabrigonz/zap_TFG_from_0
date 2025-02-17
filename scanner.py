@@ -95,7 +95,7 @@ def active_scan(url,strength):
         logger.info(f"🔎 Spider AJAX iniciado para {url}")
 
         while zap.ajaxSpider.status < 'running':
-            logger.info(f"Spider AJAX ejecutándose...")
+            logger.info("Spider AJAX ejecutándose...")
             time.sleep(2)
 
         logger.info(f"Spider AJAX completado en {url}")
