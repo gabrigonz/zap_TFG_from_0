@@ -2,7 +2,7 @@ from zapv2 import ZAPv2
 import time, json, logging, os
 from dotenv import load_dotenv
 from logger_config import setup_logger
-from db_connection import *
+from db_connection import get_db_connection
 
 
 load_dotenv()
