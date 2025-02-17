@@ -1,26 +1,12 @@
 from zapv2 import ZAPv2
 import time, json, logging, os
 from dotenv import load_dotenv
-from logging.handlers import RotatingFileHandler
+from logger_config import setup_logger
+from db_connection import *
 
 
 load_dotenv()
-
-log_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-
-log_handler = RotatingFileHandler(
-    "scanner_logs.log", maxBytes=5*1024*1024, backupCount=3 
-)
-log_handler.setFormatter(log_formatter)
-log_handler.setLevel(logging.INFO)
-
-logger = logging.getLogger()
-
-if not logger.hasHandlers():
-    logger.setLevel(logging.INFO)
-    logger.addHandler(log_handler)
-
-logger.info("Sistema de logging inicializado.")
+logger = setup_logger()
 
 def connect_to_zap():
     zap_url = os.getenv("ZAP_URL")
@@ -133,7 +119,9 @@ def active_scan(url,strength):
         return False
 
 if __name__ == '__main__':
-    url = 'http://example.com'
-    strength = 'low'
-    is_in_sites(url)
-    active_scan(url,strength)
+    conn = get_db_connection()
+    if conn:
+        logger.info("Conexion existosa")
+        conn.close()
+    else:
+        print("no se pudo conectar")
