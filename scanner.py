@@ -78,7 +78,7 @@ def get_report(url):
             reportfilename=report_file_name
         )
         if not os.path.exists(file_path):
-            logger.error(f"El archo del reporte no se encontro en la ruta especificada")
+            logger.error("El archo del reporte no se encontro en la ruta especificada")
         with open(file_path,'r') as file:
             report_content = json.loads(file)
             os.remove(file_path)
@@ -90,7 +90,7 @@ def get_report(url):
 
 def active_scan(zap,url,strength):
     try:
-        if not scan_strength(strength):
+        if not scan_strength(zap,strength):
             logger.error("No se pudo configurar el Attack Strength, abortando escaneo.")
             return False
 
