@@ -12,11 +12,14 @@ CORS(app, resources={r"/*": {"origins": [f"http://192.168.1.{i}" for i in range(
 app.config["SECRET_KEY"] = os.getenv("CSRF_TOKEN")
 csrf = CSRFProtect(app)
 
-crear_tablas()
-
-@app.route("/", methods=['GET'])
+#crear_tablas()
+@app.route('/')
 def home():
-    return render_template("index.html")
+    return render_template('index.html')
+
+@app.route('/logout')
+def logout():
+    return "Cerrando sesión..."
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5050, debug=True)
