@@ -1,3 +1,4 @@
+version: "3.8"
 
 services:
   db:
@@ -6,32 +7,33 @@ services:
     restart: always
     env_file:  
       - .env
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}  
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}  
-      - POSTGRES_DB=${POSTGRES_DB}  
     ports: 
-      - "5432:5432"  
+      - "5432:5432"
     volumes:
-      - pg_data:/var/lib/postgresql/data  
+      - pg_data:/var/lib/postgresql/data
     networks:
-      - internal_network 
+      - internal_network
+    healthcheck: 
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  
   app:
     build: .
     container_name: zap_app
     restart: always
     depends_on:
-      - db
-      - zap
+      db:
+        condition: service_healthy  
+      zap:
+        condition: service_started
     env_file:  
       - .env  
     ports:
-      - "5000:5000" 
+      - "5000:5000"
     networks:
       - internal_network
-
 
   zap:
     image: owasp/zap2docker-stable
@@ -39,10 +41,9 @@ services:
     restart: always
     env_file:
       - .env  
-    command: >
-      sh -c "zap.sh -daemon -port 8080 -host 0.0.0.0 -config api.key=$${ZAP_API_KEY}"
+    entrypoint: ["zap.sh", "-daemon", "-port", "8080", "-host", "0.0.0.0", "-config", "api.key=$${ZAP_API_KEY}"]
     ports:
-      - "8080:8080" 
+      - "8080:8080"
     networks:
       - internal_network
 
