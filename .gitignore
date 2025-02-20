@@ -3,3 +3,4 @@ scanner_logs.log
 .venv/
 __pycache__
 logs/
+generar_informe.py

@@ -73,7 +73,7 @@ def active_scan(url,strength):
             logger.error("No se pudo configurar el Attack Strength, abortando escaneo.")
             return False
 
-        # Iniciar el Spider
+        #################### SPIDER ############################
         spider_id = zap.spider.scan(url)
         if not spider_id:
             logger.error(f"No se pudo iniciar el Spider para {url}")
@@ -86,7 +86,7 @@ def active_scan(url,strength):
             time.sleep(2)
 
         logger.info(f"Spider completado en {url}")
-
+        #################### AJAX SPIDER ############################
         ajax_spider_id = zap.ajaxSpider.scan(url)
         if not ajax_spider_id:
             logger.error(f"No se pudo iniciar el Spider AJAX para {url}")
@@ -100,6 +100,7 @@ def active_scan(url,strength):
 
         logger.info(f"Spider AJAX completado en {url}")
 
+        #################### ACTIVE SCAN ############################
         scan_id = zap.ascan.scan(url)
         if not scan_id:
             logger.error(f"No se pudo iniciar el Active Scan para {url}")

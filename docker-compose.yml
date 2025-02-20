@@ -1,0 +1,22 @@
+
+services:  # servicios que vamos a utilizar
+  db:  # nombre del servicio en este caso (db) puede ser el que sea
+    image: postgres:15  # Imagen oficial de postgresql en caso de que no la tengamos hace un pull de la iagen
+    container_name: zap_db  # nombre del contenedor
+    restart: always  # hace que el contenedor se reinicie si se detiene inesperadamante
+    environment:  # nombre de usuario, password y nombre de la bbdd
+      - .env
+    ports: # permite conectarme a la bbdd desde mi localhost en el uerto 5432
+      - "5432:5432"  
+    volumes:
+      - pg_data:/var/lib/postgresql/data  # guarda la bbdd de manera persistente en /var/lib/postgresql...
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro # Ejecuta el script SQL al iniciar(solo lectura) la primera vez
+    networks:
+      - internal_network # crea una red privida de docker y solo los docker pueda comunicarse
+
+volumes:
+  pg_data:
+
+networks:
+  internal_network:
+    driver: bridge
