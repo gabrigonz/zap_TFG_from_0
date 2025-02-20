@@ -2,7 +2,6 @@ from zapv2 import ZAPv2
 import time, json, logging, os
 from dotenv import load_dotenv
 from logger_config import setup_logger
-from db_connection import get_db_connection
 
 
 load_dotenv()
@@ -24,7 +23,7 @@ def connect_to_zap():
 
 zap=connect_to_zap()
 
-def is_in_sites(url):
+def is_in_sites(zap,url):
     try:
         sites = zap.core.sites
         if url not in sites:
@@ -43,7 +42,7 @@ def is_in_sites(url):
         return False
 
 
-def scan_strength(strength):
+def scan_strength(zap,strength):
     count = 0
     try:
         for policy_id in range(5):
@@ -66,8 +65,30 @@ def scan_strength(strength):
     except Exception as error:
         logger.error(f"Error setting scan strength: {error}")
         return False  
+def get_report(url):
+    try: 
+        reportdir = 'tmp'
+        report_file_name =f'Reporte_vuleneabilides_{url}'
+        file_path = os.path.join(reportdir, f"{report_file_name}.json")
+        zap.reports.generate(
+            title="report_json_",
+            template="traditional-json",
+            sites=url,
+            reportdir=reportdir,
+            reportfilename=report_file_name
+        )
+        if not os.path.exists(file_path):
+            logger.error(f"El archo del reporte no se encontro en la ruta especificada")
+        with open(file_path,'r') as file:
+            report_content = json.loads(file)
+            os.remove(file_path)
+        return report_content
+    except Exception as e:
+        logging.error(f"Error al generar o leer el reporte: {str(e)}")
+        return False
 
-def active_scan(url,strength):
+
+def active_scan(zap,url,strength):
     try:
         if not scan_strength(strength):
             logger.error("No se pudo configurar el Attack Strength, abortando escaneo.")
@@ -119,10 +140,3 @@ def active_scan(url,strength):
         logger.error(f"Error en active_scan: {e}")
         return False
 
-if __name__ == '__main__':
-    conn = get_db_connection()
-    if conn:
-        logger.info("Conexion existosa")
-        conn.close()
-    else:
-        print("no se pudo conectar")

@@ -1,18 +1,50 @@
 
-services:  # servicios que vamos a utilizar
-  db:  # nombre del servicio en este caso (db) puede ser el que sea
-    image: postgres:15  # Imagen oficial de postgresql en caso de que no la tengamos hace un pull de la iagen
-    container_name: zap_db  # nombre del contenedor
-    restart: always  # hace que el contenedor se reinicie si se detiene inesperadamante
-    environment:  # nombre de usuario, password y nombre de la bbdd
+services:
+  db:
+    image: postgres:15
+    container_name: zap_db
+    restart: always
+    env_file:  
       - .env
-    ports: # permite conectarme a la bbdd desde mi localhost en el uerto 5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}  
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}  
+      - POSTGRES_DB=${POSTGRES_DB}  
+    ports: 
       - "5432:5432"  
     volumes:
-      - pg_data:/var/lib/postgresql/data  # guarda la bbdd de manera persistente en /var/lib/postgresql...
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro # Ejecuta el script SQL al iniciar(solo lectura) la primera vez
+      - pg_data:/var/lib/postgresql/data  
     networks:
-      - internal_network # crea una red privida de docker y solo los docker pueda comunicarse
+      - internal_network 
+
+  
+  app:
+    build: .
+    container_name: zap_app
+    restart: always
+    depends_on:
+      - db
+      - zap
+    env_file:  
+      - .env  
+    ports:
+      - "5000:5000" 
+    networks:
+      - internal_network
+
+
+  zap:
+    image: owasp/zap2docker-stable
+    container_name: zap_proxy
+    restart: always
+    env_file:
+      - .env  
+    command: >
+      sh -c "zap.sh -daemon -port 8080 -host 0.0.0.0 -config api.key=$${ZAP_API_KEY}"
+    ports:
+      - "8080:8080" 
+    networks:
+      - internal_network
 
 volumes:
   pg_data:
