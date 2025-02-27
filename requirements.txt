@@ -37,7 +37,7 @@ itsdangerous==2.2.0
 Jinja2==3.1.5
 joblib==1.4.2
 kubernetes==32.0.0
-logging==0.4.9.6
+#logging==0.4.9.6
 lxml==5.3.1
 markdown-it-py==3.0.0
 MarkupSafe==3.0.2

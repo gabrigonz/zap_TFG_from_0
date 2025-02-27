@@ -4,3 +4,4 @@ scanner_logs.log
 __pycache__
 logs/
 generar_informe.py
+custom_report.py

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ url_for('static', filename='js/scan.js') }}"></script>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Configurar Escaneo</h2>
+    <form id="scanForm" method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}  <!-- CSRF token -->
+        
+        <!-- URL con Autocompletado -->
+        <div class="mb-3">
+            {{ form.target_url.label(class="form-label") }}
+            {{ form.target_url(class="form-control", id="scanUrl", list="activosList") }}
+            <datalist id="activosList"></datalist> 
+        </div>
+
+        <!-- Intensidad del Escaneo -->
+        <div class="mb-3">
+            {{ form.strength.label(class="form-label") }}
+            {{ form.strength(class="form-control", id="ScanIntensity") }}
+        </div>
+
+        <div class="form-check form-switch mb-3">
+            {{ form.schedule.label(class="form-check-label") }}
+            {{ form.schedule(class="form-check-input", id="scheduleSwitch") }}
+        </div>
+
+       
+        <div id="scheduleFields" class="d-none">
+            <div class="mb-3">
+                {{ form.scanDateTime.label(class="form-label") }}
+                <div class="input-group">
+                    {{ form.scanDateTime(class="form-control", id="datetimepicker") }}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-check form-switch mb-3">
+            {{ form.nuevo_activo.label(class="form-check-label") }}
+            {{ form.nuevo_activo(class="form-check-input", id="nuevoActivoSwitch") }}
+        </div>
+
+        <div id="nuevoActivoFields" class="d-none">
+            <div class="mb-3">
+                {{ form.responsable.label(class="form-label") }}
+                {{ form.responsable(class="form-control", id="responsable") }}
+            </div>
+            <div class="mb-3">
+                {{ form.emails.label(class="form-label") }}
+                {{ form.emails(class="form-control", id="emails") }}
+            </div>
+            <div class="mb-3">
+                {{ form.tipo.label(class="form-label") }}
+                {{ form.tipo(class="form-control", id="tipo") }}
+            </div>
+            <div class="mb-3">
+                {{ form.periodicidad.label(class="form-label") }}
+                {{ form.periodicidad(class="form-control", id="periodicidad") }}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+<script type="text/javascript"> const csrf_token = "{{ csrf_token() }}";</script>
+{% endblock %}

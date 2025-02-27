@@ -31,6 +31,8 @@ services:
       - .env  
     ports:
       - "5050:5050"
+    volumes:
+      - .:/app
     networks:
       - public_network
       - internal_network
@@ -41,7 +43,21 @@ services:
     restart: always
     env_file:
       - .env  
-    entrypoint: ["zap.sh", "-daemon", "-port", "8080", "-host", "0.0.0.0", "-config", "api.key=$${ZAP_API_KEY}"]
+    entrypoint:
+      - zap.sh
+      - -daemon
+      - -port
+      - "8080"
+      - -host
+      - "0.0.0.0"
+      - -config
+      - api.key=${ZAP_API_KEY}
+      - -config
+      - api.addrs.addr.name=.*       
+      - -config
+      - api.addrs.addr.regex=true    # Usa regex para permitir todas las IPs
+      - -config
+      - api.disablekey=false         # Asegura que la key está activada
     ports:
       - "8080:8080"
     networks:
